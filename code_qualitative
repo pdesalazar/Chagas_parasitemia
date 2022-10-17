@@ -1,0 +1,28 @@
+load("D1_quali.RData")
+df_lines_plot1<-data.frame(x=rep(seq(-0.5,7.5),38),y=(rep(seq(1.5,38.5,1),each=9)),
+                           id=rep(1:38,each=9))
+plot1<-ggplot(subset(D1_quali,n_points>=1)) + 
+  scale_y_discrete(labels=seq(1,38,1))+
+  geom_tile(aes(x=as.numeric(timepoints), y=(id_order), fill= as.factor(q_ct)),alpha=0.8)+
+  theme_classic(base_size=10)+
+  geom_vline(aes(xintercept=-0.5))+
+  geom_vline(aes(xintercept=0.5))+
+  geom_vline(aes(xintercept=1.5))+
+  geom_vline(aes(xintercept=2.5))+
+  geom_vline(aes(xintercept=3.5))+
+  geom_vline(aes(xintercept=4.5))+
+  geom_vline(aes(xintercept=5.5))+
+  geom_vline(aes(xintercept=6.5))+
+  geom_vline(aes(xintercept=7.5))+
+  geom_line(data=df_lines_plot1,aes(x=x,y=y,group=id))+
+  scale_fill_manual(values=c("#990099","#990099","#990099","#990099","grey80"))+
+  #scale_fill_manual(values=c("grey70","aquamarine4"),labels=c("Negative","Positive"))+
+  scale_x_continuous(breaks=c(0:7),labels=c(0:7),expand = expansion())+
+  ggtitle("D1, Cohort Barcelona")+
+  ylab("Individual")+
+  xlab("Time-point")+
+  theme(legend.position = "none",
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.title = element_text(size = 10))
+plot1

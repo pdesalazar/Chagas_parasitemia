@@ -1,0 +1,43 @@
+require(LMest)
+
+D1_quali_HMM<-D1_quanti
+for (i in unique(D1_quali_HMM$Pacient)){
+  ifelse(sum(subset(D1_quali_HMM,Pacient==i&!is.na(ct))$ct)!=0,
+         print(nrow(D1_quali_HMM)),
+         D1_quali_HMM<-subset(D1_quali_HMM,Pacient!=i))}
+
+D1_quali_HMM$ct[which(is.na(D1_quali_HMM$ct))]<-40
+
+D1_quali_HMM<-subset(D1_quali_HMM,n_points>=4)
+missing<-data.frame(timepoints=as.numeric(rep(0:7,length(unique(D1_quali_HMM$Pacient)))),
+        Pacient=rep(unique(D1_quali_HMM$Pacient),each=8))
+                                              
+
+D1_quali_HMM<-full_join(D1_quali_HMM,missing, by=c("Pacient","timepoints"))
+D1_quali_HMM<-D1_quali_HMM[order(D1_quali_HMM$Pacient),]
+
+D1_quali_HMM$quali<-rep(NA,nrow(D1_quali_HMM))
+D1_quali_HMM$quali[which(D1_quali_HMM$ct<=40)]<-1
+D1_quali_HMM$quali[which(D1_quali_HMM$ct==40)]<-0
+
+D1_lmest<-data.frame(id=D1_quali_HMM$Pacient,
+                     time=D1_quali_HMM$timepoints,
+                     PCR=D1_quali_HMM$quali)
+                     
+ bar_out_1s <- lmest(responsesFormula = PCR ~ NULL, index = c("id","time"),
+                    data = D1_lmest,
+                    k = 1,
+                    tol = 1e-8, start = 1, modBasic = 1, out_se = TRUE)
+bar_out_2s <- lmest(responsesFormula = PCR ~ NULL, index = c("id","time"),
+                    data = D1_lmest,
+                    k = 2,
+                    tol = 1e-8, start = 1, modBasic = 1, out_se = TRUE)
+bar_out_3s <- lmest(responsesFormula = PCR ~ NULL, index = c("id","time"),
+                    data = D1_lmest,
+                    k = 3,
+                    tol = 1e-8, start = 1, modBasic = 1, out_se = TRUE)
+                    
+                    
+summary(bar_out_1s)
+summary(bar_out_2s)
+summary(bar_out_3s)

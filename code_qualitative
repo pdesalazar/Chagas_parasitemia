@@ -2,7 +2,7 @@ require(ggplot2)
 load("D1_plot1.RData")
 df_lines_plot1<-data.frame(x=rep(seq(-0.5,7.5),38),y=(rep(seq(1.5,38.5,1),each=9)),
                            id=rep(1:38,each=9))
-plot1<-ggplot(subset(D1_quali,n_points>=1)) + 
+plot1<-ggplot(subset(D1_quanti,n_points>=1)) + 
   scale_y_discrete(labels=seq(1,38,1))+
   geom_tile(aes(x=as.numeric(timepoints), y=(id_order), fill= as.factor(q_ct)),alpha=0.8)+
   theme_classic(base_size=10)+
@@ -27,3 +27,21 @@ plot1<-ggplot(subset(D1_quali,n_points>=1)) +
         axis.ticks.y = element_blank(),
         plot.title = element_text(size = 10))
 plot1
+
+plot2<-ggplot()+
+  geom_point(data=subset(D1_quanti,group2=="Continuous Positive"),
+             aes(x=timepoints,y=ct),fill="grey50",alpha=0.3, shape=21,size=1.2)+
+  geom_point(data=subset(D1_quanti,group2!="Continuous Positive"&group2!="Allways Negative"&
+                           group2!="Not sufficient"),
+             aes(x=timepoints,y=ct),fill="brown",alpha=0.3, shape=21,size=1.2)+
+  geom_line(data=subset(D1_quanti,group2=="Continuous Positive"),
+            aes(x=timepoints,y=ct,group=Pacient),alpha=0.35,colour="grey50",size=0.8)+
+  geom_line(data=subset(D1_quanti,group2!="Continuous Positive"&group2!="Allways Negative"&
+                          group2!="Not sufficient"),
+            aes(x=timepoints,y=ct,group=Pacient),alpha=0.25,colour="brown",size=0.8) +
+  scale_y_reverse(breaks = seq(40,30,by=-2.5))+
+  xlab("Time-point")+
+  ggtitle("D1, Cohort Barcelona")+
+  ylab("Ct-value")+
+  scale_x_continuous(breaks = c(0:7),labels=c(1:8))+
+  theme_classic()

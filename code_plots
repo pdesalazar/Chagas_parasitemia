@@ -49,3 +49,33 @@ plot2<-ggplot()+
   theme_classic()
   
   plot2
+  
+  
+  D1sem<-data.frame(m=NULL,ct=NULL,ID=NULL,se=NULL,se_n=NULL,group=NULL)
+  x<-unique(subset(D1_quanti,group2=="Continuous Positive"|
+                     group2=="Alternating (<50% positives)"|
+                     group2=="Alternating (>50% positives)"
+  )$Pacient)
+  D1_quanti$group3<-as.character(D1_quanti$group2)
+  D1_quanti[which(D1_quanti$group3=="Alternating (<50% positives)"),]$group3<-"Alternating"
+  D1_quanti$group3[which(D1_quanti$group2=="Alternating (>50% positives)")]<-"Alternating"
+  for (i in x){
+    m<-mean(subset(D1_quanti,Pacient==i)$ct)
+    group<-subset(D1_quanti,Pacient==i)$group3
+    se<-subset(D1_quanti,Pacient==i)$ct-m
+    se_n<-se/m
+    vec_ID_bcn<-data.frame(m=rep(m,unique(subset(D1_quanti,Pacient==i)$n_points)),
+                           ct=subset(D1_quanti,Pacient==i)$ct,
+                           ID=rep(i,unique(subset(D1_quanti,Pacient==i)$n_points)),
+                           se=se,se_n=round(se_n,3),
+                           tp=c(1:unique(subset(D1_quanti,Pacient==i)$n_points)),group=group)
+    D1sem<-rbind(D1sem,vec_ID_bcn)
+    
+plot3<-ggplot(subset(D1sem,group="Contiuous Positive"))+
+  geom_histogram(aes(x=se_n),bindwidth=0.1)+
+  theme_classic(base_size=10)+
+  xlab("Relative Aproximation Error")+
+  ggtitle("D1")+
+  facet_wrap(vars(group))
+  
+ plot3
